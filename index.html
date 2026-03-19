@@ -982,6 +982,83 @@ section {
   text-underline-offset: 6px;
 }
 
+/* AI AM YOU reveal */
+.cta-reveal {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.cta-ai-text {
+  font-family: var(--serif);
+  font-size: clamp(36px, 8vw, 80px);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+  text-shadow: 
+    0 0 40px rgba(255,0,170,0.3),
+    0 0 80px rgba(255,0,170,0.1);
+  animation: none;
+  pointer-events: none;
+}
+.cta-ai-text.revealing {
+  animation: aiAmYouReveal 2s var(--ease-out-expo) forwards, aiAmYouGlow 3s ease-in-out 2s infinite;
+}
+@keyframes aiAmYouReveal {
+  0% { 
+    opacity: 0; 
+    transform: translateY(30px) scale(0.9);
+    text-shadow: 
+      -4px 0 rgba(0,240,255,0.8),
+      4px 0 rgba(255,0,170,0.8);
+    filter: blur(8px);
+  }
+  30% { 
+    opacity: 1; 
+    text-shadow: 
+      -6px 0 rgba(0,240,255,0.6),
+      6px 0 rgba(255,0,170,0.6);
+    filter: blur(2px);
+    transform: translateY(-5px) scale(1.05);
+  }
+  50% {
+    text-shadow: 
+      -2px 0 rgba(0,240,255,0.4),
+      2px 0 rgba(255,0,170,0.4);
+    filter: blur(0);
+    transform: translateY(3px) scale(0.98);
+  }
+  70% {
+    text-shadow: 
+      -3px 0 rgba(0,240,255,0.3),
+      3px 0 rgba(255,0,170,0.3);
+    transform: translateY(-2px) scale(1.02);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+    text-shadow: 
+      0 0 40px rgba(255,0,170,0.3),
+      0 0 80px rgba(255,0,170,0.1);
+    filter: blur(0);
+  }
+}
+@keyframes aiAmYouGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 30px rgba(255,0,170,0.2),
+      0 0 60px rgba(255,0,170,0.08);
+  }
+  50% {
+    text-shadow: 
+      0 0 50px rgba(255,0,170,0.5),
+      0 0 100px rgba(255,0,170,0.2),
+      0 0 150px rgba(255,0,170,0.08);
+  }
+}
+
 /* ========================================
    FOOTER
    ======================================== */
@@ -1248,14 +1325,14 @@ section {
 <section class="proposals-section" id="proposals">
   <div class="proposals-header">
     <div class="fade-in">
-      <div class="tag" data-vi="Collaborators" data-en="Collaborators" data-zh="合作者">Collaborators</div>
+      <div class="tag" data-vi="The Alliance" data-en="The Alliance" data-zh="联盟">The Alliance</div>
     </div>
     <div class="reveal-wrap">
       <div class="section-heading reveal-text" style="margin-bottom: 8px;">Proposals</div>
     </div>
     <div class="fade-in">
-      <p class="body-text" style="max-width: none; text-align: center; color: var(--text-dd); margin: 0 auto;" data-vi="Đề Xuất Hợp Tác" data-en="Collaboration Proposals" data-zh="合作提案">
-        Đề Xuất Hợp Tác
+      <p class="body-text" style="max-width: none; text-align: center; color: var(--text-dd); margin: 0 auto;" data-vi="Liên Minh Sáng Tạo" data-en="Creative Alliance" data-zh="创意联盟">
+        Liên Minh Sáng Tạo
       </p>
     </div>
   </div>
@@ -1341,17 +1418,20 @@ section {
     <div class="cta-label" data-vi="Get Involved" data-en="Get Involved" data-zh="加入我们">Get Involved</div>
   </div>
   <div class="reveal-wrap">
-    <div class="cta-heading reveal-text" data-vi="Want to be part of <em>Who Am AI</em>?" data-en="Want to be part of <em>Who Am AI</em>?" data-zh="想成为<em>Who Am AI</em>的一部分？">Want to be part of <em>Who Am AI</em>?</div>
+    <div class="cta-heading reveal-text" data-vi="When to be part of <em>Who Am AI</em>?" data-en="When to be part of <em>Who Am AI</em>?" data-zh="何时成为<em>Who Am AI</em>的一部分？">When to be part of <em>Who Am AI</em>?</div>
   </div>
   <div class="fade-in">
-    <div class="cta-heading-vi" data-vi="Bạn muốn tham gia Who Am AI?" data-en="Join the Who Am AI project" data-zh="加入 Who Am AI 项目">Bạn muốn tham gia Who Am AI?</div>
+    <div class="cta-heading-vi" data-vi="Khi bạn tham gia Who Am AI?" data-en="When you join Who Am AI" data-zh="当你加入 Who Am AI">Khi bạn tham gia Who Am AI?</div>
   </div>
   <div class="fade-in">
-    <button class="cta-btn" id="cta-btn" onclick="revealEmail()">
-      <span>Contact Us</span>
+    <button class="cta-btn" id="cta-btn" onclick="revealContact()">
+      <span>Contact</span>
     </button>
-    <div class="cta-email" id="cta-email">
-      <a href="mailto:Awakenorigins@gmail.com">Awakenorigins@gmail.com</a>
+    <div class="cta-reveal" id="cta-reveal">
+      <div class="cta-ai-text" id="cta-ai-text">AI AM YOU</div>
+      <div class="cta-email" id="cta-email">
+        <a href="mailto:Awakenorigins@gmail.com">Awakenorigins@gmail.com</a>
+      </div>
     </div>
   </div>
 </section>
@@ -1627,16 +1707,26 @@ section {
   // ==========================================
   // CTA EMAIL REVEAL
   // ==========================================
-  window.revealEmail = function() {
-    let btn = document.getElementById('cta-btn');
-    let email = document.getElementById('cta-email');
+  window.revealContact = function() {
+    var btn = document.getElementById('cta-btn');
+    var aiText = document.getElementById('cta-ai-text');
+    var email = document.getElementById('cta-email');
+
+    // Fade out button
     btn.style.opacity = '0';
     btn.style.transform = 'translateY(-10px)';
     btn.style.transition = 'opacity 0.4s, transform 0.4s';
     btn.style.pointerEvents = 'none';
+
+    // After button fades → reveal "AI AM YOU" with cinematic glitch
+    setTimeout(function() {
+      aiText.classList.add('revealing');
+    }, 400);
+
+    // After AI AM YOU settles → fade in email
     setTimeout(function() {
       email.classList.add('visible');
-    }, 300);
+    }, 2200);
   };
 
   // ==========================================
