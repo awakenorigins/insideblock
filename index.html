@@ -704,7 +704,7 @@ section {
 
 .proposals-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: clamp(20px, 3vw, 40px);
   max-width: 1200px;
   margin: 0 auto;
@@ -854,6 +854,27 @@ section {
   pointer-events: none;
 }
 .card-blue:hover .card-inner::after { opacity: 1; }
+
+/* Card 4 — Johnny Trí Nguyễn — Crimson Steel */
+.card-crimson { border-color: rgba(180,50,30,0.08); }
+.card-crimson:hover { border-color: rgba(180,50,30,0.25); }
+.card-crimson .card-glow { background: #b4321e; box-shadow: 0 0 20px rgba(180,50,30,0.3); }
+.card-crimson:hover .card-glow { box-shadow: 0 0 40px rgba(180,50,30,0.5); }
+.card-crimson .card-tag { color: #e05533; }
+.card-crimson .card-cta { color: #e05533; }
+.card-crimson .card-inner::after {
+  content: '04';
+  position: absolute;
+  bottom: -20px; right: -10px;
+  font-family: var(--serif);
+  font-size: 120px;
+  font-weight: 600;
+  color: rgba(180,50,30,0.04);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+.card-crimson:hover .card-inner::after { opacity: 1; }
 
 /* ========================================
    CTA / JOIN SECTION
@@ -1286,6 +1307,23 @@ section {
           <div class="card-desc" data-vi="Đạo diễn Việt Kiều Mỹ — &quot;Mắt Biếc&quot;, &quot;Thiên Thần Hộ Mệnh&quot;. Thẩm mỹ điện ảnh phương Tây hòa quyện văn hóa Việt." data-en="Vietnamese-American director — &quot;Dreamy Eyes&quot;, &quot;Guardian Angel&quot;. Western cinematic aesthetics blended with Vietnamese culture." data-zh="越裔美籍导演 — 《碧眼》《守护天使》。西方电影美学与越南文化的完美融合。">
             Đạo diễn Việt Kiều Mỹ — "Mắt Biếc", "Thiên Thần Hộ Mệnh". 
             Thẩm mỹ điện ảnh phương Tây hòa quyện văn hóa Việt.
+          </div>
+        </div>
+        <div class="card-cta">View Proposal →</div>
+      </div>
+    </a>
+
+    <!-- Card 4: Johnny Trí Nguyễn -->
+    <a href="proposals/johnny-tri-nguyen.html" class="proposal-card card-crimson fade-in">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">04</div>
+        <div>
+          <div class="card-tag">Action Director · Martial Artist</div>
+          <div class="card-name">Johnny Trí Nguyễn</div>
+          <div class="card-desc" data-vi="Võ sư — diễn viên hành động — đạo diễn. &quot;Dòng Máu Anh Hùng&quot;, &quot;Bẫy Rồng&quot;. Hành động Việt đẳng cấp quốc tế, chiến đấu thật 100%." data-en="Martial artist — action star — director. &quot;The Rebel&quot;, &quot;Clash&quot;. World-class Vietnamese action cinema, 100% real combat." data-zh="武术家 — 动作明星 — 导演。《英雄血脉》《龙之陷阱》。国际级越南动作电影，100%真实格斗。">
+            Võ sư — diễn viên hành động — đạo diễn. "Dòng Máu Anh Hùng", "Bẫy Rồng". 
+            Hành động Việt đẳng cấp quốc tế, chiến đấu thật 100%.
           </div>
         </div>
         <div class="card-cta">View Proposal →</div>
