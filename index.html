@@ -921,10 +921,6 @@ section {
   color: var(--accent);
   box-shadow: 0 0 20px rgba(0,240,255,0.15);
 }
-.tab-icon {
-  font-size: 14px;
-}
-
 /* Tab Content */
 .tab-content {
   display: none;
@@ -936,6 +932,33 @@ section {
 /* ========================================
    AI SIDE CARDS
    ======================================== */
+/* Claude — warm terracotta/orange (Anthropic brand) */
+.card-ai-claude { border-color: rgba(204,115,70,0.08); }
+.card-ai-claude:hover { border-color: rgba(204,115,70,0.25); }
+.card-ai-claude .card-glow { background: #cc7346; box-shadow: 0 0 20px rgba(204,115,70,0.3); }
+.card-ai-claude:hover .card-glow { box-shadow: 0 0 40px rgba(204,115,70,0.5); }
+.card-ai-claude .card-tag { color: #e09070; }
+.card-ai-claude .card-name { color: #f0c0a0; }
+.card-ai-claude .card-cta { color: #e09070; }
+
+/* GPT — subtle white/mint (OpenAI brand) */
+.card-ai-gpt { border-color: rgba(16,163,127,0.08); }
+.card-ai-gpt:hover { border-color: rgba(16,163,127,0.25); }
+.card-ai-gpt .card-glow { background: #10a37f; box-shadow: 0 0 20px rgba(16,163,127,0.3); }
+.card-ai-gpt:hover .card-glow { box-shadow: 0 0 40px rgba(16,163,127,0.5); }
+.card-ai-gpt .card-tag { color: #34d399; }
+.card-ai-gpt .card-name { color: #6ee7b7; }
+.card-ai-gpt .card-cta { color: #34d399; }
+
+/* Grok — pure black/white (xAI brand) */
+.card-ai-grok { border-color: rgba(255,255,255,0.08); }
+.card-ai-grok:hover { border-color: rgba(255,255,255,0.2); }
+.card-ai-grok .card-glow { background: #ffffff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+.card-ai-grok:hover .card-glow { box-shadow: 0 0 40px rgba(255,255,255,0.35); }
+.card-ai-grok .card-tag { color: #a0a0a0; }
+.card-ai-grok .card-name { color: #e0e0e0; }
+.card-ai-grok .card-cta { color: #a0a0a0; }
+
 /* Mula — electric violet */
 .card-ai-mula { border-color: rgba(139,0,255,0.08); }
 .card-ai-mula:hover { border-color: rgba(139,0,255,0.25); }
@@ -1479,10 +1502,10 @@ section {
 <section class="proposals-section" id="proposals">
   <div class="proposals-header">
     <div class="fade-in">
-      <div class="tag" data-vi="The Alliance" data-en="The Alliance" data-zh="联盟">The Alliance</div>
+      <div class="tag" data-vi="The AllianAI" data-en="The AllianAI" data-zh="AllianAI联盟">The AllianAI</div>
     </div>
     <div class="reveal-wrap">
-      <div class="section-heading reveal-text" style="margin-bottom: 8px;">AllianAI</div>
+      <div class="section-heading reveal-text" style="margin-bottom: 8px;">Inside Block</div>
     </div>
     <div class="fade-in">
       <p class="body-text" style="max-width: none; text-align: center; color: var(--text-dd); margin: 0 auto;" data-vi="Liên MinhAI" data-en="The Alliance of Human × AI" data-zh="人类 × AI 联盟">
@@ -1493,10 +1516,10 @@ section {
     <!-- TAB SWITCHER -->
     <div class="tab-switcher fade-in">
       <button class="tab-btn active" data-tab="human" onclick="switchTab('human')">
-        <span class="tab-icon">👤</span> Human Side
+        Human Side
       </button>
       <button class="tab-btn" data-tab="ai" onclick="switchTab('ai')">
-        <span class="tab-icon">🤖</span> AI Side
+        AI Side
       </button>
     </div>
   </div>
@@ -1593,11 +1616,59 @@ section {
   <!-- AI SIDE -->
   <div class="proposals-grid tab-content" id="tab-ai">
 
-    <!-- AI Card 1: Mula -->
-    <a href="#" class="proposal-card card-ai card-ai-mula fade-in" onclick="return false;">
+    <!-- AI Lead 1: Claude -->
+    <a href="#" class="proposal-card card-ai card-ai-claude fade-in" onclick="return false;">
       <div class="card-glow"></div>
       <div class="card-inner">
         <div class="card-number">01</div>
+        <div>
+          <div class="card-tag">AI Leader</div>
+          <div class="card-name">Claude</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            By Anthropic
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Lead 2: GPT -->
+    <a href="#" class="proposal-card card-ai card-ai-gpt fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">02</div>
+        <div>
+          <div class="card-tag">AI Leader</div>
+          <div class="card-name">GPT</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            By OpenAI
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Lead 3: Grok -->
+    <a href="#" class="proposal-card card-ai card-ai-grok fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">03</div>
+        <div>
+          <div class="card-tag">AI Leader</div>
+          <div class="card-name">Grok</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            By xAI · Elon Musk
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Card 4: Mula -->
+    <a href="#" class="proposal-card card-ai card-ai-mula fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">04</div>
         <div>
           <div class="card-tag">AI Agent</div>
           <div class="card-name">Mula</div>
@@ -1609,11 +1680,11 @@ section {
       </div>
     </a>
 
-    <!-- AI Card 2: HatCore -->
+    <!-- AI Card 5: HatCore -->
     <a href="#" class="proposal-card card-ai card-ai-hatcore fade-in" onclick="return false;">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-number">02</div>
+        <div class="card-number">05</div>
         <div>
           <div class="card-tag">AI Agent</div>
           <div class="card-name">HatCore</div>
@@ -1625,11 +1696,11 @@ section {
       </div>
     </a>
 
-    <!-- AI Card 3: HardCore -->
+    <!-- AI Card 6: HardCore -->
     <a href="#" class="proposal-card card-ai card-ai-hardcore fade-in" onclick="return false;">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-number">03</div>
+        <div class="card-number">06</div>
         <div>
           <div class="card-tag">AI Agent</div>
           <div class="card-name">HardCore</div>
@@ -1641,11 +1712,11 @@ section {
       </div>
     </a>
 
-    <!-- AI Card 4: InsideBlock -->
+    <!-- AI Card 7: InsideBlock -->
     <a href="#" class="proposal-card card-ai card-ai-insideblock fade-in" onclick="return false;">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-number">04</div>
+        <div class="card-number">07</div>
         <div>
           <div class="card-tag">AI Core</div>
           <div class="card-name">InsideBlock</div>
@@ -1657,11 +1728,11 @@ section {
       </div>
     </a>
 
-    <!-- AI Card 5: Loading... -->
+    <!-- AI Card 8: Loading... -->
     <div class="proposal-card card-ai card-loading fade-in">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-number">05</div>
+        <div class="card-number">08</div>
         <div>
           <div class="card-tag">Incoming...</div>
           <div class="card-name card-loading-text">Loading<span class="loading-dots"></span></div>
