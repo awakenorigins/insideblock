@@ -877,6 +877,152 @@ section {
 .card-crimson:hover .card-inner::after { opacity: 1; }
 
 /* ========================================
+   TAB SWITCHER
+   ======================================== */
+.tab-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 32px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 30px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,0.06);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dd);
+  padding: 10px 28px;
+  cursor: pointer;
+  border-radius: 24px;
+  transition: all 0.4s var(--ease-out-expo);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tab-btn:hover {
+  color: var(--text-d);
+}
+.tab-btn.active[data-tab="human"] {
+  background: rgba(201,168,76,0.1);
+  color: #c9a84c;
+  box-shadow: 0 0 20px rgba(201,168,76,0.15);
+}
+.tab-btn.active[data-tab="ai"] {
+  background: rgba(0,240,255,0.1);
+  color: var(--accent);
+  box-shadow: 0 0 20px rgba(0,240,255,0.15);
+}
+.tab-icon {
+  font-size: 14px;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: grid;
+}
+
+/* ========================================
+   AI SIDE CARDS
+   ======================================== */
+/* Mula — electric violet */
+.card-ai-mula { border-color: rgba(139,0,255,0.08); }
+.card-ai-mula:hover { border-color: rgba(139,0,255,0.25); }
+.card-ai-mula .card-glow { background: #8b00ff; box-shadow: 0 0 20px rgba(139,0,255,0.3); }
+.card-ai-mula:hover .card-glow { box-shadow: 0 0 40px rgba(139,0,255,0.5); }
+.card-ai-mula .card-tag { color: #a855f7; }
+.card-ai-mula .card-name { color: #c4b5fd; }
+.card-ai-mula .card-cta { color: #a855f7; }
+
+/* HatCore — neon green (matrix) */
+.card-ai-hatcore { border-color: rgba(0,255,65,0.08); }
+.card-ai-hatcore:hover { border-color: rgba(0,255,65,0.25); }
+.card-ai-hatcore .card-glow { background: #00ff41; box-shadow: 0 0 20px rgba(0,255,65,0.3); }
+.card-ai-hatcore:hover .card-glow { box-shadow: 0 0 40px rgba(0,255,65,0.5); }
+.card-ai-hatcore .card-tag { color: #22c55e; }
+.card-ai-hatcore .card-name { color: #86efac; }
+.card-ai-hatcore .card-cta { color: #22c55e; }
+
+/* HardCore — hot orange/red (aggressive) */
+.card-ai-hardcore { border-color: rgba(255,100,0,0.08); }
+.card-ai-hardcore:hover { border-color: rgba(255,100,0,0.25); }
+.card-ai-hardcore .card-glow { background: #ff6400; box-shadow: 0 0 20px rgba(255,100,0,0.3); }
+.card-ai-hardcore:hover .card-glow { box-shadow: 0 0 40px rgba(255,100,0,0.5); }
+.card-ai-hardcore .card-tag { color: #f97316; }
+.card-ai-hardcore .card-name { color: #fdba74; }
+.card-ai-hardcore .card-cta { color: #f97316; }
+
+/* InsideBlock — cyan (core/primary) */
+.card-ai-insideblock { border-color: rgba(0,240,255,0.08); }
+.card-ai-insideblock:hover { border-color: rgba(0,240,255,0.25); }
+.card-ai-insideblock .card-glow { background: #00f0ff; box-shadow: 0 0 20px rgba(0,240,255,0.3); }
+.card-ai-insideblock:hover .card-glow { box-shadow: 0 0 40px rgba(0,240,255,0.5); }
+.card-ai-insideblock .card-tag { color: var(--accent); }
+.card-ai-insideblock .card-name { color: var(--accent-l); }
+.card-ai-insideblock .card-cta { color: var(--accent); }
+
+/* AI cards subtle scanline overlay */
+.card-ai .card-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,240,255,0.015) 2px,
+    rgba(0,240,255,0.015) 4px
+  );
+  pointer-events: none;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+/* ========================================
+   LOADING CARD
+   ======================================== */
+.card-loading {
+  border-color: rgba(255,255,255,0.04);
+  cursor: default;
+}
+.card-loading .card-glow {
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 15px rgba(255,255,255,0.08);
+  animation: loadingPulse 2s ease-in-out infinite;
+}
+.card-loading .card-tag { color: var(--text-dd); }
+.card-loading .card-name { color: var(--text-d); }
+.card-loading-text {
+  font-family: var(--mono) !important;
+}
+.loading-dots::after {
+  content: '';
+  animation: loadingDots 1.5s steps(4, end) infinite;
+}
+@keyframes loadingDots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+@keyframes loadingPulse {
+  0%, 100% { opacity: 0.3; box-shadow: 0 0 10px rgba(255,255,255,0.05); }
+  50% { opacity: 0.6; box-shadow: 0 0 25px rgba(255,255,255,0.12); }
+}
+
+/* ========================================
    CTA / JOIN SECTION
    ======================================== */
 
@@ -1142,6 +1288,14 @@ section {
     font-size: 9px;
     letter-spacing: 0;
   }
+  .tab-switcher {
+    margin-top: 24px;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1220,7 +1374,7 @@ section {
   <div class="nav-brand">InsideBlock</div>
   <div class="nav-links">
     <a href="#concept">Concept</a>
-    <a href="#proposals">Proposals</a>
+    <a href="#proposals">AllianAI</a>
     <a href="#join">Join</a>
   </div>
   <div class="lang-switcher">
@@ -1328,16 +1482,27 @@ section {
       <div class="tag" data-vi="The Alliance" data-en="The Alliance" data-zh="联盟">The Alliance</div>
     </div>
     <div class="reveal-wrap">
-      <div class="section-heading reveal-text" style="margin-bottom: 8px;">Proposals</div>
+      <div class="section-heading reveal-text" style="margin-bottom: 8px;">AllianAI</div>
     </div>
     <div class="fade-in">
-      <p class="body-text" style="max-width: none; text-align: center; color: var(--text-dd); margin: 0 auto;" data-vi="Liên Minh Sáng Tạo" data-en="Creative Alliance" data-zh="创意联盟">
-        Liên Minh Sáng Tạo
+      <p class="body-text" style="max-width: none; text-align: center; color: var(--text-dd); margin: 0 auto;" data-vi="Liên MinhAI" data-en="The Alliance of Human × AI" data-zh="人类 × AI 联盟">
+        Liên MinhAI
       </p>
+    </div>
+
+    <!-- TAB SWITCHER -->
+    <div class="tab-switcher fade-in">
+      <button class="tab-btn active" data-tab="human" onclick="switchTab('human')">
+        <span class="tab-icon">👤</span> Human Side
+      </button>
+      <button class="tab-btn" data-tab="ai" onclick="switchTab('ai')">
+        <span class="tab-icon">🤖</span> AI Side
+      </button>
     </div>
   </div>
 
-  <div class="proposals-grid">
+  <!-- HUMAN SIDE -->
+  <div class="proposals-grid tab-content active" id="tab-human">
 
     <!-- Card 1: Trần Thanh Huy -->
     <a href="proposals/tran-thanh-huy.html" class="proposal-card card-gold fade-in">
@@ -1406,6 +1571,107 @@ section {
         <div class="card-cta">View Proposal →</div>
       </div>
     </a>
+
+    <!-- Card 5: Loading... -->
+    <div class="proposal-card card-loading fade-in">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">05</div>
+        <div>
+          <div class="card-tag">Incoming...</div>
+          <div class="card-name card-loading-text">Loading<span class="loading-dots"></span></div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            ██░░░░░░░░ Scanning... 
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.3">Decrypting →</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AI SIDE -->
+  <div class="proposals-grid tab-content" id="tab-ai">
+
+    <!-- AI Card 1: Mula -->
+    <a href="#" class="proposal-card card-ai card-ai-mula fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">01</div>
+        <div>
+          <div class="card-tag">AI Agent</div>
+          <div class="card-name">Mula</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            ░░░ Data pending ░░░
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Card 2: HatCore -->
+    <a href="#" class="proposal-card card-ai card-ai-hatcore fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">02</div>
+        <div>
+          <div class="card-tag">AI Agent</div>
+          <div class="card-name">HatCore</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            ░░░ Data pending ░░░
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Card 3: HardCore -->
+    <a href="#" class="proposal-card card-ai card-ai-hardcore fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">03</div>
+        <div>
+          <div class="card-tag">AI Agent</div>
+          <div class="card-name">HardCore</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            ░░░ Data pending ░░░
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Card 4: InsideBlock -->
+    <a href="#" class="proposal-card card-ai card-ai-insideblock fade-in" onclick="return false;">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">04</div>
+        <div>
+          <div class="card-tag">AI Core</div>
+          <div class="card-name">InsideBlock</div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            ░░░ Data pending ░░░
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.4">Coming Soon →</div>
+      </div>
+    </a>
+
+    <!-- AI Card 5: Loading... -->
+    <div class="proposal-card card-ai card-loading fade-in">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">05</div>
+        <div>
+          <div class="card-tag">Incoming...</div>
+          <div class="card-name card-loading-text">Loading<span class="loading-dots"></span></div>
+          <div class="card-desc" style="color: var(--text-dd);">
+            ██░░░░░░░░ Scanning...
+          </div>
+        </div>
+        <div class="card-cta" style="opacity:0.3">Decrypting →</div>
+      </div>
+    </div>
 
   </div>
 </section>
@@ -1727,6 +1993,36 @@ section {
     setTimeout(function() {
       email.classList.add('visible');
     }, 2200);
+  };
+
+  // ==========================================
+  // TAB SWITCHER (Human Side / AI Side)
+  // ==========================================
+  window.switchTab = function(tab) {
+    // Toggle buttons
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
+    });
+
+    // Toggle content with fade
+    document.querySelectorAll('.tab-content').forEach(function(content) {
+      var isTarget = content.id === 'tab-' + tab;
+      if (isTarget) {
+        content.classList.add('active');
+        // Re-trigger fade-in animations for cards
+        content.querySelectorAll('.fade-in').forEach(function(el, i) {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(20px)';
+          setTimeout(function() {
+            el.style.transition = 'opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo)';
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+          }, i * 100);
+        });
+      } else {
+        content.classList.remove('active');
+      }
+    });
   };
 
   // ==========================================
