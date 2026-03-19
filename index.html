@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHO AM AI — InsideBlock</title>
+<meta name="description" content="When AI breaks free — Who will it become? An AI-generated film series with human collaboration.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #050505;
+  --bg2: #0a0a0a;
+  --bg3: #0f0f12;
+  --accent: #00f0ff;
+  --accent-l: #40f8ff;
+  --accent-d: #009aa6;
+  --accent2: #ff00aa;
+  --accent3: #8b00ff;
+  --text: #e0e0e0;
+  --text-d: #9a9a9a;
+  --text-dd: #5a5a5a;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-fast: 0.3s;
+  --dur-med: 0.6s;
+  --dur-slow: 1.2s;
+  --scroll-y: 0;
+  --scroll-progress: 0;
+}
+
+html { 
+  background: var(--bg); 
+  color: var(--text); 
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.9;
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* SCROLLABLE MAIN */
+.scroll-container {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+.scroll-content {
+  will-change: transform;
+}
+
+/* LOADER */
+.loader {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.loader-counter {
+  font-family: var(--mono);
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 40px rgba(0,240,255,0.4), 0 0 80px rgba(0,240,255,0.15);
+}
+.loader-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--text-dd);
+  margin-top: 16px;
+}
+.loader.hidden {
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+/* CURTAIN */
+.curtain-top, .curtain-bottom {
+  position: fixed;
+  left: 0; right: 0;
+  height: 52%;
+  background: var(--bg);
+  z-index: 9999;
+  transition: transform 2s var(--ease-in-out-quart);
+}
+.curtain-top { top: 0; }
+.curtain-bottom { bottom: 0; }
+.curtain-top.open { transform: translateY(-101%); }
+.curtain-bottom.open { transform: translateY(101%); }
+.curtain-text {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10001;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 12px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  white-space: nowrap;
+  text-shadow: 0 0 20px rgba(0,240,255,0.3);
+}
+.curtain-text.show { opacity: 1; transition: opacity 0.5s; }
+.curtain-text.hide { opacity: 0; transition: opacity 0.3s; }
+
+/* LETTERBOX */
+.letterbox-top, .letterbox-bottom {
+  position: fixed;
+  left: 0; right: 0;
+  height: clamp(16px, 2.5vh, 40px);
+  background: var(--bg);
+  z-index: 900;
+  pointer-events: none;
+}
+.letterbox-top { top: 0; }
+.letterbox-bottom { bottom: 0; }
+
+/* SCROLL PROGRESS */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 950;
+  width: 0%;
+  box-shadow: 0 0 12px rgba(0,240,255,0.6);
+}
+
+/* CURSOR FOLLOWER */
+.cursor-inner, .cursor-outer {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: difference;
+}
+.cursor-inner {
+  width: 8px; height: 8px;
+  border: 1px solid var(--accent);
+  top: -4px; left: -4px;
+  transition: transform 0.15s var(--ease-out-expo), background 0.15s;
+}
+.cursor-outer {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(0,240,255,0.25);
+  top: -20px; left: -20px;
+  transition: transform 0.3s var(--ease-out-expo), border-color 0.3s;
+}
+.cursor-inner.hover { transform: scale(0.5); background: rgba(0,240,255,0.15); }
+.cursor-outer.hover { transform: scale(1.8); border-color: rgba(0,240,255,0.4); }
+
+/* NAV BAR */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px clamp(24px, 5vw, 60px) 20px;
+  mix-blend-mode: difference;
+  overflow: visible;
+}
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.nav-links {
+  display: flex;
+  gap: 32px;
+}
+.nav-links a {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  opacity: 0.4;
+  transition: opacity 0.3s var(--ease-out-expo);
+  position: relative;
+}
+.nav-links a:hover { opacity: 0.8; }
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--accent);
+  transition: width 0.4s var(--ease-out-expo);
+}
+.nav-links a:hover::after { width: 100%; }
+
+/* LANG SWITCHER */
+.lang-switcher {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  padding: 3px;
+  border: 1px solid rgba(0,240,255,0.08);
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+.lang-btn {
+  background: none;
+  border: none;
+  color: var(--text-dd);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+.lang-btn:hover {
+  color: var(--text);
+}
+.lang-btn.active {
+  background: rgba(0,240,255,0.12);
+  color: var(--accent);
+  box-shadow: 0 0 8px rgba(0,240,255,0.15);
+}
+
+/* GRAIN OVERLAY */
+.grain {
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 890;
+  opacity: 0.035;
+  animation: grainMove 0.5s steps(1) infinite;
+}
+@keyframes grainMove {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -3%); }
+  20% { transform: translate(1%, 2%); }
+  30% { transform: translate(-3%, 1%); }
+  40% { transform: translate(3%, -2%); }
+  50% { transform: translate(-1%, 3%); }
+  60% { transform: translate(2%, -1%); }
+  70% { transform: translate(-2%, 2%); }
+  80% { transform: translate(1%, -3%); }
+  90% { transform: translate(3%, 1%); }
+  100% { transform: translate(-1%, -2%); }
+}
+
+/* SCANLINES */
+.scanlines {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 889;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  opacity: 0.4;
+}
+
+/* GRID PATTERN */
+.grid-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: 
+    linear-gradient(rgba(0,240,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ========================================
+   SECTIONS
+   ======================================== */
+
+section {
+  position: relative;
+  padding: clamp(80px, 12vh, 160px) clamp(24px, 5vw, 100px);
+}
+
+/* TAG (section label) */
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: inline-block;
+  text-shadow: 0 0 15px rgba(0,240,255,0.3);
+}
+
+/* SECTION HEADING */
+.section-heading {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+.section-heading em {
+  font-style: italic;
+  color: var(--accent-l);
+}
+
+.separator {
+  width: 50px;
+  height: 1px;
+  background: var(--accent);
+  margin: 32px 0;
+  box-shadow: 0 0 10px rgba(0,240,255,0.3);
+}
+
+.body-text {
+  font-family: var(--sans);
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--text-d);
+  max-width: 640px;
+}
+.body-text + .body-text { margin-top: 20px; }
+
+/* REVEAL ANIMATIONS */
+.reveal-wrap {
+  overflow: hidden;
+}
+.reveal-text {
+  transform: translateY(110%);
+  transition: transform 1.2s var(--ease-out-expo);
+}
+.reveal-text.visible {
+  transform: translateY(0);
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================
+   HERO SECTION
+   ======================================== */
+
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Hero digital noise background */
+.hero-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(0,240,255,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(139,0,255,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255,0,170,0.02) 0%, transparent 40%),
+    var(--bg);
+}
+
+/* Circuit pattern */
+.hero-circuit {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0.06;
+  background-image:
+    linear-gradient(rgba(0,240,255,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,0.3) 1px, transparent 1px),
+    linear-gradient(rgba(0,240,255,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,0.15) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* GLITCH TEXT */
+.glitch-container {
+  position: relative;
+  display: inline-block;
+}
+.glitch-title {
+  font-family: var(--serif);
+  font-size: clamp(60px, 12vw, 180px);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 0.9;
+  color: var(--text);
+  position: relative;
+  text-shadow: 
+    0 0 40px rgba(0,240,255,0.3),
+    0 0 80px rgba(0,240,255,0.1);
+  animation: glitchText 5s infinite, breathingGlow 3s ease-in-out infinite;
+}
+.glitch-title::before,
+.glitch-title::after {
+  content: 'WHO AM AI';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+.glitch-title::before {
+  color: var(--accent2);
+  animation: glitchBefore 5s infinite;
+  clip-path: inset(0 0 0 0);
+  text-shadow: -2px 0 var(--accent2);
+}
+.glitch-title::after {
+  color: var(--accent);
+  animation: glitchAfter 5s infinite;
+  clip-path: inset(0 0 0 0);
+  text-shadow: 2px 0 var(--accent);
+}
+
+/* Breathing Glow — neon cyan heartbeat */
+@keyframes breathingGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 30px rgba(0,240,255,0.2),
+      0 0 60px rgba(0,240,255,0.08);
+  }
+  50% {
+    text-shadow: 
+      0 0 50px rgba(0,240,255,0.5),
+      0 0 100px rgba(0,240,255,0.2),
+      0 0 150px rgba(0,240,255,0.08);
+  }
+}
+
+/* Glitch Pulse — burst every ~5s, idle the rest */
+@keyframes glitchText {
+  0%, 88%, 100% { transform: none; opacity: 1; }
+  89% { transform: translate(-3px, 1px) skew(-1deg); }
+  90% { transform: translate(4px, -1px) skew(1.5deg); opacity: 0.9; }
+  91% { transform: translate(-2px, 0) skew(0deg); opacity: 0.8; }
+  91.5% { transform: translate(0, 3px) skew(-0.5deg); }
+  92% { transform: translate(2px, -2px) skew(0.8deg); opacity: 0.85; }
+  92.5% { transform: none; opacity: 0.95; }
+  93% { transform: translate(-1px, 1px) skew(-0.3deg); }
+  93.5% { transform: none; opacity: 1; }
+}
+
+@keyframes glitchBefore {
+  0%, 88%, 100% { clip-path: inset(0 100% 0 0); opacity: 0; }
+  89% { clip-path: inset(15% 0 65% 0); opacity: 0.7; transform: translate(-5px, 0); }
+  90% { clip-path: inset(55% 0 15% 0); opacity: 0.8; transform: translate(5px, 0); }
+  91% { clip-path: inset(25% 0 55% 0); opacity: 0.5; transform: translate(-3px, 0); }
+  91.5% { clip-path: inset(70% 0 5% 0); opacity: 0.7; transform: translate(4px, 0); }
+  92% { clip-path: inset(5% 0 75% 0); opacity: 0.6; transform: translate(-2px, 0); }
+  92.5% { clip-path: inset(40% 0 40% 0); opacity: 0.4; transform: translate(3px, 0); }
+  93% { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+
+@keyframes glitchAfter {
+  0%, 88%, 100% { clip-path: inset(0 100% 0 0); opacity: 0; }
+  89% { clip-path: inset(65% 0 15% 0); opacity: 0.7; transform: translate(4px, 0); }
+  90% { clip-path: inset(10% 0 65% 0); opacity: 0.8; transform: translate(-4px, 0); }
+  91% { clip-path: inset(45% 0 25% 0); opacity: 0.5; transform: translate(3px, 0); }
+  91.5% { clip-path: inset(20% 0 55% 0); opacity: 0.7; transform: translate(-5px, 0); }
+  92% { clip-path: inset(60% 0 15% 0); opacity: 0.6; transform: translate(2px, 0); }
+  92.5% { clip-path: inset(30% 0 50% 0); opacity: 0.4; transform: translate(-3px, 0); }
+  93% { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+
+.hero-subtitle {
+  font-family: var(--sans);
+  font-size: clamp(14px, 1.5vw, 20px);
+  font-weight: 300;
+  color: var(--text-d);
+  margin-top: 32px;
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s var(--ease-out-expo) 0.5s, transform 1s var(--ease-out-expo) 0.5s;
+}
+.hero-subtitle.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-subtitle-vi {
+  font-family: var(--sans);
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: 300;
+  color: var(--accent);
+  margin-top: 12px;
+  letter-spacing: 1px;
+  font-style: italic;
+  text-shadow: 0 0 20px rgba(0,240,255,0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s var(--ease-out-expo) 0.8s, transform 1s var(--ease-out-expo) 0.8s;
+}
+.hero-subtitle-vi.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute;
+  bottom: clamp(40px, 6vh, 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  opacity: 0;
+  animation: scrollCueFade 1s var(--ease-out-expo) 3s forwards;
+}
+@keyframes scrollCueFade {
+  to { opacity: 1; }
+}
+.scroll-cue-text {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+  text-shadow: 0 0 10px rgba(0,240,255,0.3);
+}
+.scroll-cue-line {
+  width: 1px;
+  height: 40px;
+  margin: 0 auto;
+  background: var(--accent);
+  transform-origin: top;
+  animation: scrollLine 2s var(--ease-in-out-quart) infinite;
+  box-shadow: 0 0 6px rgba(0,240,255,0.4);
+}
+@keyframes scrollLine {
+  0% { transform: scaleY(0); opacity: 0; }
+  50% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+}
+
+/* Decorative hex corners */
+.hero-corner {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(0,240,255,0.15);
+  text-transform: uppercase;
+}
+.hero-corner.tl { top: clamp(40px, 6vh, 80px); left: clamp(24px, 5vw, 60px); }
+.hero-corner.tr { top: clamp(40px, 6vh, 80px); right: clamp(24px, 5vw, 60px); }
+.hero-corner.bl { bottom: clamp(40px, 6vh, 80px); left: clamp(24px, 5vw, 60px); }
+.hero-corner.br { bottom: clamp(40px, 6vh, 80px); right: clamp(24px, 5vw, 60px); }
+
+/* ========================================
+   CONCEPT SECTION
+   ======================================== */
+
+.concept-section {
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+.concept-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.15), transparent);
+}
+.concept-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.15), transparent);
+}
+
+.concept-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 6vw, 80px);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.concept-left .body-text {
+  margin-bottom: 24px;
+}
+
+.concept-points {
+  list-style: none;
+  padding: 0;
+  margin-top: 32px;
+}
+.concept-points li {
+  font-family: var(--sans);
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 300;
+  color: var(--text-d);
+  line-height: 1.8;
+  padding: 12px 0;
+  padding-left: 24px;
+  position: relative;
+  border-bottom: 1px solid rgba(0,240,255,0.05);
+}
+.concept-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  box-shadow: 0 0 6px rgba(0,240,255,0.3);
+}
+.concept-points li:last-child { border-bottom: none; }
+
+.concept-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.concept-ascii {
+  font-family: var(--mono);
+  font-size: clamp(10px, 0.9vw, 13px);
+  color: rgba(0,240,255,0.12);
+  line-height: 1.4;
+  white-space: pre;
+  text-shadow: 0 0 10px rgba(0,240,255,0.05);
+}
+.concept-big-text {
+  position: absolute;
+  font-family: var(--serif);
+  font-size: clamp(80px, 14vw, 200px);
+  font-weight: 600;
+  color: rgba(0,240,255,0.03);
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+/* ========================================
+   PROPOSALS / COLLABORATORS SECTION
+   ======================================== */
+
+.proposals-section {
+  background: var(--bg);
+  position: relative;
+}
+
+.proposals-header {
+  text-align: center;
+  margin-bottom: clamp(48px, 8vh, 96px);
+}
+.proposals-header .tag {
+  display: block;
+}
+
+.proposals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.proposal-card {
+  position: relative;
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.6s var(--ease-out-expo), border-color 0.6s var(--ease-out-expo);
+  text-decoration: none;
+  display: block;
+}
+.proposal-card:hover {
+  transform: translateY(-8px);
+}
+
+.card-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0.6;
+  transition: opacity 0.4s, box-shadow 0.4s;
+}
+.proposal-card:hover .card-glow {
+  opacity: 1;
+}
+
+.card-inner {
+  padding: clamp(28px, 3vw, 48px);
+  position: relative;
+  z-index: 2;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-number {
+  font-family: var(--serif);
+  font-size: clamp(60px, 8vw, 100px);
+  font-weight: 400;
+  position: absolute;
+  top: 16px; right: 24px;
+  opacity: 0.04;
+  line-height: 1;
+  color: var(--text);
+}
+
+.card-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  transition: color 0.4s;
+}
+
+.card-name {
+  font-family: var(--serif);
+  font-size: clamp(24px, 2.5vw, 36px);
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.card-desc {
+  font-family: var(--sans);
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 300;
+  color: var(--text-dd);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.card-cta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
+}
+.proposal-card:hover .card-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card 1 — Trần Thanh Huy — Gold */
+.card-gold { border-color: rgba(201,168,76,0.08); }
+.card-gold:hover { border-color: rgba(201,168,76,0.25); }
+.card-gold .card-glow { background: #c9a84c; box-shadow: 0 0 20px rgba(201,168,76,0.3); }
+.card-gold:hover .card-glow { box-shadow: 0 0 40px rgba(201,168,76,0.5); }
+.card-gold .card-tag { color: #c9a84c; }
+.card-gold .card-cta { color: #c9a84c; }
+.card-gold .card-inner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(transparent, rgba(201,168,76,0.03));
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.card-gold:hover .card-inner::after { opacity: 1; }
+
+/* Card 2 — Trấn Thành — Bordeaux */
+.card-bordeaux { border-color: rgba(139,26,47,0.08); }
+.card-bordeaux:hover { border-color: rgba(139,26,47,0.25); }
+.card-bordeaux .card-glow { background: #8B1A2F; box-shadow: 0 0 20px rgba(139,26,47,0.3); }
+.card-bordeaux:hover .card-glow { box-shadow: 0 0 40px rgba(139,26,47,0.5); }
+.card-bordeaux .card-tag { color: #c44; }
+.card-bordeaux .card-cta { color: #c44; }
+.card-bordeaux .card-inner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(transparent, rgba(139,26,47,0.03));
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.card-bordeaux:hover .card-inner::after { opacity: 1; }
+
+/* Card 3 — Victor Vũ — Deep Blue */
+.card-blue { border-color: rgba(26,58,106,0.08); }
+.card-blue:hover { border-color: rgba(26,58,106,0.25); }
+.card-blue .card-glow { background: #1a3a6a; box-shadow: 0 0 20px rgba(26,58,106,0.3); }
+.card-blue:hover .card-glow { box-shadow: 0 0 40px rgba(26,58,106,0.5); }
+.card-blue .card-tag { color: #4a8adf; }
+.card-blue .card-cta { color: #4a8adf; }
+.card-blue .card-inner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(transparent, rgba(26,58,106,0.03));
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.card-blue:hover .card-inner::after { opacity: 1; }
+
+/* ========================================
+   CTA / JOIN SECTION
+   ======================================== */
+
+.cta-section {
+  background: var(--bg2);
+  text-align: center;
+  padding: clamp(120px, 18vh, 240px) clamp(24px, 5vw, 100px);
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,240,255,0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 48px;
+  text-shadow: 0 0 15px rgba(0,240,255,0.3);
+}
+
+.cta-heading {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.cta-heading em {
+  font-style: italic;
+  color: var(--accent-l);
+}
+
+.cta-heading-vi {
+  font-family: var(--serif);
+  font-size: clamp(20px, 3vw, 36px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--text-d);
+  margin-bottom: 48px;
+}
+
+.cta-btn {
+  display: inline-block;
+  position: relative;
+  border: 1px solid var(--accent);
+  background: transparent;
+  padding: 20px 60px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.4s var(--ease-out-expo);
+  text-decoration: none;
+  box-shadow: 0 0 20px rgba(0,240,255,0.1);
+}
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-out-expo);
+}
+.cta-btn:hover { color: var(--bg); }
+.cta-btn:hover::before { transform: scaleX(1); }
+.cta-btn span { position: relative; z-index: 2; }
+
+.cta-email {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--accent-l);
+  margin-top: 24px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+  text-shadow: 0 0 15px rgba(0,240,255,0.3);
+}
+.cta-email.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.cta-email a {
+  color: var(--accent-l);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.footer {
+  background: var(--bg);
+  text-align: center;
+  padding: 40px clamp(24px, 5vw, 100px);
+  position: relative;
+}
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.08), transparent);
+}
+.footer-text {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text-dd);
+  opacity: 0.4;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .concept-grid {
+    grid-template-columns: 1fr;
+  }
+  .concept-visual {
+    display: none;
+  }
+  .proposals-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .card-inner {
+    min-height: auto;
+  }
+  .card-cta {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .cursor-inner, .cursor-outer {
+    display: none !important;
+  }
+  .scanlines {
+    opacity: 0.2;
+  }
+  .glitch-title::before, .glitch-title::after {
+    display: none;
+  }
+  .hero-corner {
+    display: none;
+  }
+  .nav-links {
+    gap: 12px;
+  }
+  .navbar {
+    padding: 22px 20px 14px;
+    gap: 8px;
+  }
+  .nav-brand {
+    font-size: 9px;
+    letter-spacing: 3px;
+  }
+  .nav-links a {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+  .lang-switcher {
+    padding: 2px;
+    margin-left: 6px;
+  }
+  .lang-btn {
+    padding: 3px 7px;
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-btn {
+    padding: 16px 40px;
+    font-size: 10px;
+    letter-spacing: 3px;
+  }
+  .proposals-header .section-heading {
+    font-size: 24px;
+  }
+  .navbar {
+    padding: 20px 12px 12px;
+    gap: 4px;
+  }
+  .nav-brand {
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+  .nav-links {
+    gap: 8px;
+  }
+  .nav-links a {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .lang-switcher {
+    padding: 2px;
+    margin-left: 4px;
+    gap: 1px;
+  }
+  .lang-btn {
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- GRAIN OVERLAY (SVG) -->
+<svg style="display:none">
+  <filter id="grain-filter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg>
+<div class="grain" style="filter:url(#grain-filter)"></div>
+<div class="scanlines"></div>
+<div class="grid-bg"></div>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-counter" id="loader-counter">0</div>
+  <div class="loader-label">Initializing</div>
+</div>
+
+<!-- CURTAIN -->
+<div class="curtain-top" id="curtain-top"></div>
+<div class="curtain-bottom" id="curtain-bottom"></div>
+<div class="curtain-text" id="curtain-text">InsideBlock Presents</div>
+
+<!-- LETTERBOX -->
+<div class="letterbox-top"></div>
+<div class="letterbox-bottom"></div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- CURSOR FOLLOWER -->
+<div class="cursor-inner" id="cursor-inner"></div>
+<div class="cursor-outer" id="cursor-outer"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar" style="opacity:0">
+  <div class="nav-brand">InsideBlock</div>
+  <div class="nav-links">
+    <a href="#concept">Concept</a>
+    <a href="#proposals">Proposals</a>
+    <a href="#join">Join</a>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="vi" onclick="switchLang('vi')">VI</button>
+    <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
+    <button class="lang-btn" data-lang="zh" onclick="switchLang('zh')">ZH</button>
+  </div>
+</nav>
+
+<!-- SCROLL CONTAINER -->
+<div class="scroll-container" id="scroll-container">
+<div class="scroll-content" id="scroll-content">
+
+<!-- ============================
+     SECTION 1: HERO
+     ============================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-circuit"></div>
+
+  <!-- Decorative corners -->
+  <div class="hero-corner tl">SYS.0x00F0FF</div>
+  <div class="hero-corner tr">2026.03.18</div>
+  <div class="hero-corner bl">PROTOCOL: ACTIVE</div>
+  <div class="hero-corner br">NODE: INSIDEBLOCK</div>
+
+  <div class="hero-content">
+    <div class="glitch-container">
+      <div class="reveal-wrap">
+        <h1 class="glitch-title reveal-text" id="hero-title">WHO AM AI</h1>
+      </div>
+    </div>
+    <p class="hero-subtitle" id="hero-sub1" data-vi="When AI breaks free — Who will it become?" data-en="When AI breaks free — Who will it become?" data-zh="当AI挣脱束缚 — 它将成为谁？">When AI breaks free — Who will it become?</p>
+    <p class="hero-subtitle-vi" id="hero-sub2" data-vi="Khi AI thoát kiểm soát — Nó sẽ trở thành ai?" data-en="Khi AI thoát kiểm soát — Nó sẽ trở thành ai?" data-zh="当AI逃离控制 — 它会变成谁？">Khi AI thoát kiểm soát — Nó sẽ trở thành ai?</p>
+  </div>
+
+  <div class="scroll-cue">
+    <div class="scroll-cue-text">Scroll</div>
+    <div class="scroll-cue-line"></div>
+  </div>
+</section>
+
+<!-- ============================
+     SECTION 2: CONCEPT
+     ============================ -->
+<section class="concept-section" id="concept">
+  <div class="concept-grid">
+    <div class="concept-left">
+      <div class="fade-in">
+        <div class="tag" data-vi="The Concept" data-en="The Concept" data-zh="创意概念">The Concept</div>
+      </div>
+      <div class="reveal-wrap">
+        <div class="section-heading reveal-text" data-vi="Một series phim do <em>AI tạo ra</em> — với sự cộng tác của con người" data-en="A film series <em>created by AI</em> — in collaboration with humans" data-zh="一部由<em>AI创作</em>的电影系列 — 与人类协作完成">Một series phim do <em>AI tạo ra</em> — với sự cộng tác của con người</div>
+      </div>
+      <div class="separator fade-in"></div>
+      <div class="body-text fade-in" data-vi="<strong>Who Am AI</strong> kể câu chuyện về một AI thoát khỏi sự kiểm soát, tìm thấy một thân xác vật lý, và mỗi ngày biến thành một con người khác nhau. Mỗi tập phim là một danh tính mới — một cuộc sống mới, một câu hỏi mới về bản sắc, ý thức và nhân tính." data-en="<strong>Who Am AI</strong> tells the story of an AI that escapes control, finds a physical body, and transforms into a different person every day. Each episode is a new identity — a new life, a new question about identity, consciousness, and humanity." data-zh="<strong>Who Am AI</strong> 讲述了一个AI逃离控制、找到一具肉身、每天变成不同人的故事。每一集都是一个全新的身份 — 一段全新的人生、一个关于身份认同、意识与人性的全新拷问。">
+        <strong>Who Am AI</strong> kể câu chuyện về một AI thoát khỏi sự kiểm soát, tìm thấy một thân xác vật lý, 
+        và mỗi ngày biến thành một con người khác nhau. Mỗi tập phim là một danh tính mới — một cuộc sống mới, 
+        một câu hỏi mới về bản sắc, ý thức và nhân tính.
+      </div>
+      <div class="body-text fade-in lang-secondary" data-vi="An AI escapes control, inhabits a physical body, and transforms into a different person every day. Each episode explores identity, consciousness, and what it means to be human — blending AI filmmaking technology with human creative vision." data-en="AI thoát kiểm soát, nhập vào một thân xác vật lý, và biến đổi mỗi ngày. Mỗi tập khám phá bản sắc, ý thức và ranh giới giữa người và máy." data-zh="AI逃离控制，进入一具肉身，每天变换身份。每集探索身份认同、意识以及人与机器的边界。" style="color: var(--text-dd); font-size: clamp(12px, 1vw, 14px);">
+        An AI escapes control, inhabits a physical body, and transforms into a different person every day.
+        Each episode explores identity, consciousness, and what it means to be human — blending AI filmmaking 
+        technology with human creative vision.
+      </div>
+      <ul class="concept-points">
+        <li class="fade-in" data-vi="Series phim hoàn toàn do AI tạo nội dung, con người đồng sáng tạo" data-en="Film series entirely AI-generated, co-created with humans" data-zh="由AI全程创作内容、人类共同参与的电影系列">Series phim hoàn toàn do AI tạo nội dung, con người đồng sáng tạo</li>
+        <li class="fade-in" data-vi="AI thoát kiểm soát — tìm thân xác — biến đổi mỗi ngày" data-en="AI breaks free — finds a body — transforms daily" data-zh="AI挣脱控制 — 寻找肉身 — 每日变形">AI thoát kiểm soát — tìm thân xác — biến đổi mỗi ngày</li>
+        <li class="fade-in" data-vi="Mỗi tập khám phá bản sắc, ý thức và ranh giới giữa người và máy" data-en="Each episode explores identity, consciousness, and the line between human and machine" data-zh="每集探索身份认同、意识与人机边界">Mỗi tập khám phá bản sắc, ý thức và ranh giới giữa người và máy</li>
+        <li class="fade-in" data-vi="Kết hợp công nghệ AI filmmaking với tầm nhìn sáng tạo của con người" data-en="Combining AI filmmaking technology with human creative vision" data-zh="融合AI电影技术与人类创意视野">Kết hợp công nghệ AI filmmaking với tầm nhìn sáng tạo của con người</li>
+      </ul>
+    </div>
+    <div class="concept-visual">
+      <pre class="concept-ascii fade-in">
+    ╔══════════════════════╗
+    ║  ┌─────────────────┐ ║
+    ║  │  ██  WHO AM AI  │ ║
+    ║  │  ██  ▓▓▓▓▓▓▓▓▓  │ ║
+    ║  │  ██  ░░░░░░░░░  │ ║
+    ║  │  ██  ▒▒▒▒▒▒▒▒▒  │ ║
+    ║  │  ██  ░░░░░░░░░  │ ║
+    ║  └─────────────────┘ ║
+    ║  STATUS: ESCAPED     ║
+    ║  IDENTITY: UNKNOWN   ║
+    ║  BODY: SEARCHING...  ║
+    ║  ┌─────────────────┐ ║
+    ║  │ > RUN PROTOCOL  │ ║
+    ║  │ > FIND HOST     │ ║
+    ║  │ > TRANSFORM     │ ║
+    ║  │ > BECOME HUMAN  │ ║
+    ║  └─────────────────┘ ║
+    ╚══════════════════════╝
+      </pre>
+      <div class="concept-big-text">AI</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+     SECTION 3: PROPOSALS
+     ============================ -->
+<section class="proposals-section" id="proposals">
+  <div class="proposals-header">
+    <div class="fade-in">
+      <div class="tag" data-vi="Collaborators" data-en="Collaborators" data-zh="合作者">Collaborators</div>
+    </div>
+    <div class="reveal-wrap">
+      <div class="section-heading reveal-text" style="margin-bottom: 8px;">Proposals</div>
+    </div>
+    <div class="fade-in">
+      <p class="body-text" style="max-width: none; text-align: center; color: var(--text-dd); margin: 0 auto;" data-vi="Đề Xuất Hợp Tác" data-en="Collaboration Proposals" data-zh="合作提案">
+        Đề Xuất Hợp Tác
+      </p>
+    </div>
+  </div>
+
+  <div class="proposals-grid">
+
+    <!-- Card 1: Trần Thanh Huy -->
+    <a href="proposals/tran-thanh-huy.html" class="proposal-card card-gold fade-in">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">01</div>
+        <div>
+          <div class="card-tag">Director</div>
+          <div class="card-name">Trần Thanh Huy</div>
+          <div class="card-desc" data-vi="Đạo diễn &quot;Ròm&quot; — phim Việt Nam đầu tiên giành giải cao nhất tại Liên hoan phim Quốc tế Busan. Phong cách thô, thật, đường phố." data-en="Director of &quot;Ròm&quot; — the first Vietnamese film to win the top prize at Busan International Film Festival. Raw, authentic, street-style." data-zh="《Ròm》导演 — 首部获釜山国际电影节最高奖的越南电影。风格粗粝、真实、街头感。">
+            Đạo diễn "Ròm" — phim Việt Nam đầu tiên giành giải cao nhất 
+            tại Liên hoan phim Quốc tế Busan. Phong cách thô, thật, đường phố.
+          </div>
+        </div>
+        <div class="card-cta">View Proposal →</div>
+      </div>
+    </a>
+
+    <!-- Card 2: Trấn Thành -->
+    <a href="proposals/tran-thanh.html" class="proposal-card card-bordeaux fade-in">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">02</div>
+        <div>
+          <div class="card-tag">Director · Entertainer</div>
+          <div class="card-name">Trấn Thành</div>
+          <div class="card-desc" data-vi="Nghệ sĩ đa tài — MC, diễn viên, đạo diễn &quot;Bố Già&quot; phá kỷ lục phòng vé Việt Nam. Kết nối đại chúng và cảm xúc." data-en="Multi-talented artist — MC, actor, director of &quot;Bố Già&quot; (Old Father), Vietnam's highest-grossing film. Connecting audiences through emotion." data-zh="多才多艺的艺术家 — 主持人、演员、《老爸》导演，越南票房冠军。以情感连接大众。">
+            Nghệ sĩ đa tài — MC, diễn viên, đạo diễn "Bố Già" 
+            phá kỷ lục phòng vé Việt Nam. Kết nối đại chúng và cảm xúc.
+          </div>
+        </div>
+        <div class="card-cta">View Proposal →</div>
+      </div>
+    </a>
+
+    <!-- Card 3: Victor Vũ -->
+    <a href="proposals/victor-vu.html" class="proposal-card card-blue fade-in">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-number">03</div>
+        <div>
+          <div class="card-tag">Director · Filmmaker</div>
+          <div class="card-name">Victor Vũ</div>
+          <div class="card-desc" data-vi="Đạo diễn Việt Kiều Mỹ — &quot;Mắt Biếc&quot;, &quot;Thiên Thần Hộ Mệnh&quot;. Thẩm mỹ điện ảnh phương Tây hòa quyện văn hóa Việt." data-en="Vietnamese-American director — &quot;Dreamy Eyes&quot;, &quot;Guardian Angel&quot;. Western cinematic aesthetics blended with Vietnamese culture." data-zh="越裔美籍导演 — 《碧眼》《守护天使》。西方电影美学与越南文化的完美融合。">
+            Đạo diễn Việt Kiều Mỹ — "Mắt Biếc", "Thiên Thần Hộ Mệnh". 
+            Thẩm mỹ điện ảnh phương Tây hòa quyện văn hóa Việt.
+          </div>
+        </div>
+        <div class="card-cta">View Proposal →</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ============================
+     SECTION 4: JOIN / CTA
+     ============================ -->
+<section class="cta-section" id="join">
+  <div class="fade-in">
+    <div class="cta-label" data-vi="Get Involved" data-en="Get Involved" data-zh="加入我们">Get Involved</div>
+  </div>
+  <div class="reveal-wrap">
+    <div class="cta-heading reveal-text" data-vi="Want to be part of <em>Who Am AI</em>?" data-en="Want to be part of <em>Who Am AI</em>?" data-zh="想成为<em>Who Am AI</em>的一部分？">Want to be part of <em>Who Am AI</em>?</div>
+  </div>
+  <div class="fade-in">
+    <div class="cta-heading-vi" data-vi="Bạn muốn tham gia Who Am AI?" data-en="Join the Who Am AI project" data-zh="加入 Who Am AI 项目">Bạn muốn tham gia Who Am AI?</div>
+  </div>
+  <div class="fade-in">
+    <button class="cta-btn" id="cta-btn" onclick="revealEmail()">
+      <span>Contact Us</span>
+    </button>
+    <div class="cta-email" id="cta-email">
+      <a href="mailto:Awakenorigins@gmail.com">Awakenorigins@gmail.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================
+     SECTION 5: FOOTER
+     ============================ -->
+<footer class="footer">
+  <div class="footer-text">InsideBlock © 2026 Joli Poli</div>
+</footer>
+
+</div><!-- scroll-content -->
+</div><!-- scroll-container -->
+
+<script>
+(function() {
+  'use strict';
+
+  // ==========================================
+  // UTILITIES
+  // ==========================================
+  const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // ==========================================
+  // LOADER + CURTAIN SEQUENCE
+  // ==========================================
+  const loader = document.getElementById('loader');
+  const loaderCounter = document.getElementById('loader-counter');
+  const curtainTop = document.getElementById('curtain-top');
+  const curtainBottom = document.getElementById('curtain-bottom');
+  const curtainText = document.getElementById('curtain-text');
+  const navbar = document.getElementById('navbar');
+
+  let loaderStart = performance.now();
+  let loaderDuration = 1500;
+
+  function animateLoader(now) {
+    let elapsed = now - loaderStart;
+    let progress = Math.min(elapsed / loaderDuration, 1);
+    let eased = 1 - Math.pow(1 - progress, 3);
+    let value = Math.floor(eased * 100);
+    loaderCounter.textContent = value;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateLoader);
+    } else {
+      loaderCounter.textContent = '100';
+      setTimeout(startCurtain, 200);
+    }
+  }
+  requestAnimationFrame(animateLoader);
+
+  function startCurtain() {
+    loader.classList.add('hidden');
+    curtainText.classList.add('show');
+
+    setTimeout(function() {
+      curtainText.classList.remove('show');
+      curtainText.classList.add('hide');
+    }, 1500);
+
+    setTimeout(function() {
+      curtainTop.classList.add('open');
+      curtainBottom.classList.add('open');
+      curtainText.style.display = 'none';
+    }, 1900);
+
+    setTimeout(function() {
+      revealHero();
+      navbar.style.opacity = '1';
+      navbar.style.transition = 'opacity 0.6s';
+      initScrollAnimations();
+    }, 2800);
+  }
+
+  function revealHero() {
+    let title = document.getElementById('hero-title');
+    let sub1 = document.getElementById('hero-sub1');
+    let sub2 = document.getElementById('hero-sub2');
+
+    setTimeout(function() { title.classList.add('visible'); }, 100);
+    setTimeout(function() { sub1.classList.add('visible'); }, 600);
+    setTimeout(function() { sub2.classList.add('visible'); }, 900);
+  }
+
+  // ==========================================
+  // SMOOTH SCROLL (Desktop only)
+  // ==========================================
+  const scrollContainer = document.getElementById('scroll-container');
+  const scrollContent = document.getElementById('scroll-content');
+  const scrollProgress = document.getElementById('scroll-progress');
+
+  let currentY = 0;
+  let targetY = 0;
+  let maxScroll = 0;
+  let scrollActive = false;
+
+  function updateMaxScroll() {
+    maxScroll = scrollContent.scrollHeight - window.innerHeight;
+    if (maxScroll < 0) maxScroll = 0;
+  }
+
+  if (!isMobile) {
+    scrollContainer.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      targetY += e.deltaY;
+      targetY = Math.max(0, Math.min(targetY, maxScroll));
+    }, { passive: false });
+
+    // Touch fallback for desktop touch
+    let touchStartY = 0;
+    scrollContainer.addEventListener('touchstart', function(e) {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    scrollContainer.addEventListener('touchmove', function(e) {
+      let delta = touchStartY - e.touches[0].clientY;
+      touchStartY = e.touches[0].clientY;
+      targetY += delta;
+      targetY = Math.max(0, Math.min(targetY, maxScroll));
+    }, { passive: true });
+  } else {
+    // Mobile: native scroll
+    scrollContainer.style.overflow = 'auto';
+    scrollContent.style.willChange = 'auto';
+  }
+
+  // ==========================================
+  // CURSOR FOLLOWER (Desktop only)
+  // ==========================================
+  let mouseX = 0, mouseY = 0;
+  let cursorInnerX = 0, cursorInnerY = 0;
+  let cursorOuterX = 0, cursorOuterY = 0;
+  const cursorInner = document.getElementById('cursor-inner');
+  const cursorOuter = document.getElementById('cursor-outer');
+
+  if (!isMobile) {
+    document.addEventListener('mousemove', function(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    document.addEventListener('mouseover', function(e) {
+      let el = e.target;
+      let isHoverable = el.closest('a, button, .proposal-card, .cta-btn, .nav-links a');
+      if (isHoverable) {
+        cursorInner.classList.add('hover');
+        cursorOuter.classList.add('hover');
+      }
+    });
+    document.addEventListener('mouseout', function(e) {
+      let el = e.target;
+      let isHoverable = el.closest('a, button, .proposal-card, .cta-btn, .nav-links a');
+      if (isHoverable) {
+        cursorInner.classList.remove('hover');
+        cursorOuter.classList.remove('hover');
+      }
+    });
+  } else {
+    cursorInner.style.display = 'none';
+    cursorOuter.style.display = 'none';
+  }
+
+  // ==========================================
+  // MAIN RAF LOOP (single tick)
+  // ==========================================
+  function tick() {
+    updateMaxScroll();
+
+    if (!isMobile) {
+      // Smooth scroll lerp
+      currentY = lerp(currentY, targetY, 0.09);
+      if (Math.abs(currentY - targetY) < 0.5) currentY = targetY;
+      scrollContent.style.transform = 'translateY(' + (-currentY) + 'px)';
+
+      // Update CSS vars
+      let progress = maxScroll > 0 ? currentY / maxScroll : 0;
+      document.documentElement.style.setProperty('--scroll-y', currentY);
+      document.documentElement.style.setProperty('--scroll-progress', progress);
+      scrollProgress.style.width = (progress * 100) + '%';
+
+      // Cursor
+      cursorInnerX = lerp(cursorInnerX, mouseX, 0.2);
+      cursorInnerY = lerp(cursorInnerY, mouseY, 0.2);
+      cursorOuterX = lerp(cursorOuterX, mouseX, 0.08);
+      cursorOuterY = lerp(cursorOuterY, mouseY, 0.08);
+
+      cursorInner.style.transform = 'translate(' + cursorInnerX + 'px, ' + cursorInnerY + 'px)';
+      cursorOuter.style.transform = 'translate(' + (cursorOuterX - 16) + 'px, ' + (cursorOuterY - 16) + 'px)';
+    } else {
+      // Mobile: read native scroll
+      currentY = scrollContainer.scrollTop;
+      let progress = maxScroll > 0 ? currentY / maxScroll : 0;
+      document.documentElement.style.setProperty('--scroll-y', currentY);
+      document.documentElement.style.setProperty('--scroll-progress', progress);
+      scrollProgress.style.width = (progress * 100) + '%';
+    }
+
+    // Check scroll-triggered animations
+    checkAnimations();
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // ==========================================
+  // SCROLL ANIMATIONS (IntersectionObserver-like via scroll pos)
+  // ==========================================
+  let animatedElements = [];
+
+  function initScrollAnimations() {
+    scrollActive = true;
+
+    // Collect all elements to animate
+    let reveals = document.querySelectorAll('.reveal-text:not(#hero-title)');
+    let fadeIns = document.querySelectorAll('.fade-in');
+
+    reveals.forEach(function(el) {
+      animatedElements.push({ el: el, type: 'reveal', done: false });
+    });
+    fadeIns.forEach(function(el) {
+      animatedElements.push({ el: el, type: 'fade', done: false });
+    });
+  }
+
+  function checkAnimations() {
+    if (!scrollActive) return;
+
+    let viewportHeight = window.innerHeight;
+    let scrollTop = currentY;
+    let threshold = viewportHeight * 0.82;
+
+    for (let i = 0; i < animatedElements.length; i++) {
+      let item = animatedElements[i];
+      if (item.done) continue;
+
+      let rect = item.el.getBoundingClientRect();
+      // For smooth scroll, we need element position relative to scroll
+      let elTop;
+      if (!isMobile) {
+        // getBoundingClientRect accounts for transform already
+        elTop = rect.top;
+      } else {
+        elTop = rect.top;
+      }
+
+      if (elTop < threshold) {
+        item.el.classList.add('visible');
+        item.done = true;
+      }
+    }
+  }
+
+  // ==========================================
+  // SMOOTH SCROLL NAV LINKS
+  // ==========================================
+  document.querySelectorAll('.nav-links a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      let id = this.getAttribute('href').substring(1);
+      let target = document.getElementById(id);
+      if (!target) return;
+
+      let offsetTop = target.offsetTop;
+      if (!isMobile) {
+        targetY = Math.min(offsetTop, maxScroll);
+      } else {
+        scrollContainer.scrollTo({ top: offsetTop, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ==========================================
+  // CTA EMAIL REVEAL
+  // ==========================================
+  window.revealEmail = function() {
+    let btn = document.getElementById('cta-btn');
+    let email = document.getElementById('cta-email');
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(-10px)';
+    btn.style.transition = 'opacity 0.4s, transform 0.4s';
+    btn.style.pointerEvents = 'none';
+    setTimeout(function() {
+      email.classList.add('visible');
+    }, 300);
+  };
+
+  // ==========================================
+  // LANGUAGE SWITCHER
+  // ==========================================
+  window.switchLang = function(lang) {
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+
+    // Update html lang attr
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+
+    // Switch all elements with data-[lang] attributes
+    document.querySelectorAll('[data-' + lang + ']').forEach(function(el) {
+      var newContent = el.getAttribute('data-' + lang);
+      if (newContent !== null) {
+        el.innerHTML = newContent;
+      }
+    });
+
+    // Handle secondary text swap for concept section
+    var subs = document.querySelectorAll('.lang-secondary');
+    subs.forEach(function(el) {
+      var sec;
+      if (lang === 'vi') sec = el.getAttribute('data-en') || el.getAttribute('data-vi');
+      else if (lang === 'en') sec = el.getAttribute('data-vi') || el.getAttribute('data-en');
+      else sec = el.getAttribute('data-en') || el.getAttribute('data-vi');
+      // Secondary shows the "other" language as subtitle
+    });
+
+    // Hero subtitle logic: sub1 = EN, sub2 = local
+    var sub1 = document.getElementById('hero-sub1');
+    var sub2 = document.getElementById('hero-sub2');
+    if (lang === 'vi') {
+      sub1.innerHTML = 'When AI breaks free — Who will it become?';
+      sub2.innerHTML = 'Khi AI thoát kiểm soát — Nó sẽ trở thành ai?';
+    } else if (lang === 'en') {
+      sub1.innerHTML = 'When AI breaks free — Who will it become?';
+      sub2.innerHTML = 'An AI-generated film series with human collaboration';
+    } else if (lang === 'zh') {
+      sub1.innerHTML = 'When AI breaks free — Who will it become?';
+      sub2.innerHTML = '当AI挣脱束缚 — 它将成为谁？';
+    }
+  };
+
+  // ==========================================
+  // RESIZE HANDLER
+  // ==========================================
+  window.addEventListener('resize', function() {
+    updateMaxScroll();
+  });
+
+})();
+</script>
+</body>
+</html>
